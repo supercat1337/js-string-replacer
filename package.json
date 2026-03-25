@@ -1,0 +1,33 @@
+{
+    "name": "js-string-replacer",
+    "version": "1.0.0",
+    "description": "CLI tool to replace patterns in JavaScript string literals and add a .replace() call.",
+    "type": "module",
+    "main": "src/index.js",
+    "bin": {
+        "js-string-replacer": "src/index.js"
+    },
+    "scripts": {
+        "start": "node src/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/supercat1337/js-string-replacer.git"
+    },
+    "dependencies": {
+        "@babel/generator": "^7.26.0",
+        "@babel/parser": "^7.26.0",
+        "@babel/traverse": "^7.26.0",
+        "@babel/types": "^7.26.0",
+        "ini": "^4.1.3",
+        "minimist": "^1.2.8"
+    },
+    "keywords": [
+        "babel",
+        "string",
+        "replace",
+        "cli"
+    ],
+    "author": "Albert Bazaleev",
+    "license": "MIT"
+}
