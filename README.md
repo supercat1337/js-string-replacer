@@ -98,4 +98,4 @@ js-string-replacer input.js output.js -c config.ini
 
 ## License
 
-MIT © [supercat1337](https://github.com/supercat1337)
+MIT © [Albert Bazaleev aka supercat1337](https://github.com/supercat1337)
