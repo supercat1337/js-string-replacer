@@ -10,6 +10,48 @@ import generate from '@babel/generator';
 import * as t from '@babel/types';
 
 /**
+ *
+ * @param {traverse.NodePath} path
+ * @returns
+ */
+function isPropertyKey(path) {
+    const parent = path.parentPath;
+    if (!parent) return false;
+
+    // Object property key
+    if (parent.isObjectProperty() && parent.node.key === path.node) {
+        return true;
+    }
+    // Object method key (e.g., { method() {} } – but method names are identifiers)
+    // For completeness, also check ObjectMethod keys
+    if (parent.isObjectMethod() && parent.node.key === path.node) {
+        return true;
+    }
+    // Class method key
+    if (parent.isClassMethod() && parent.node.key === path.node) {
+        return true;
+    }
+    // Class property key
+    if (parent.isClassProperty() && parent.node.key === path.node) {
+        return true;
+    }
+    // Computed property key (the expression inside brackets)
+    // In that case, the parent is ObjectProperty with computed: true, and key is any expression.
+    // We already handle the non‑computed case above; for computed, the key is an expression,
+    // and we should not replace that expression's string literal because it's part of a computed key.
+    // So we also check if parent.isObjectProperty() and parent.node.computed === true.
+    if (
+        parent.isObjectProperty() &&
+        parent.node.computed === true &&
+        parent.node.key === path.node
+    ) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Builds a RegExp object from pattern and flags.
  *
  * @param {string} pattern - The regex pattern string.
@@ -100,6 +142,8 @@ export function transformCode(code, { pattern, flags, separator }) {
 
     traverse.default(ast, {
         StringLiteral(path) {
+            if (isPropertyKey(path)) return;
+
             const node = path.node;
             const value = node.value;
 
@@ -120,6 +164,7 @@ export function transformCode(code, { pattern, flags, separator }) {
 
         // Optional: handle template literals (simple case – no expressions)
         TemplateLiteral(path) {
+            if (isPropertyKey(path)) return;
             // Only process if there are no expressions (i.e., all quasis)
             if (path.node.expressions.length === 0) {
                 // Combine quasis into a single string
